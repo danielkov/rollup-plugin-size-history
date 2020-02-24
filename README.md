@@ -32,10 +32,13 @@ export default {
 
 Behaviour can be configured with the following options:
 
-| Name      | Description                                                         | Default value           |
-| --------- | ------------------------------------------------------------------- | ----------------------- |
-| path      | Where the snapshot file should be saved                             | `'./size.history.json'` |
-| overwrite | Should the saved record with the current commit hash be overwritten | false                   |
+| Name      | Description                                                         | Default value            |
+| --------- | ------------------------------------------------------------------- | ------------------------ |
+| path      | Where the snapshot file should be saved                             | `'./size.history.json'`  |
+| overwrite | Should the saved record with the current commit hash be overwritten | false                    |
+| emoji     | Should the output contain emojis                                    | `true`                   |
+| write     | Should the output be written to the history                         | `allChangesCommited()`   |
+| id        | How the history entry should be identified                          | `getCurrentCommitHash()` |
 
 ```ts
 import size, { SizeHistoryOptions } from 'rollup-plugin-size-history';

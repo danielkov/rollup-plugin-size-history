@@ -19,8 +19,7 @@ const plugins = [
 
 const { source: input, main: file } = pkg;
 
-// rollup supports plugins in ESM format
-const format = 'esm';
+const format = 'cjs';
 
 export default {
   input,
