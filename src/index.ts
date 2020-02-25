@@ -76,14 +76,27 @@ const ensureFile = (path: string, defaultValue = ''): string => {
   return defaultValue;
 };
 
-const parseFile = <T>(file: string): T => {
+const isValidHistory = (history: unknown): history is History => {
+  return Array.isArray(history) && history.length
+    ? Array.isArray(history[0].sizes) && typeof history[0].id === 'string'
+    : true;
+};
+
+const parseFile = (file: string): History => {
+  let parsed: unknown;
   try {
-    return JSON.parse(file);
+    parsed = JSON.parse(file);
   } catch {
     throw new Error(
       'Could not parse previous snapshot. If this is unintentional, please remove this file.',
     );
   }
+  if (!isValidHistory(parsed)) {
+    throw new Error(
+      `${file} format is invalid. To use a different file for history, use options.path`,
+    );
+  }
+  return parsed;
 };
 
 const createDiff = (oldValues: Size, newValues: Size) => {
@@ -158,7 +171,7 @@ const getSnapshots = (
   const newSnapshot = { id, sizes: [] };
   if (!history.length) {
     history.push(newSnapshot);
-    return [newSnapshot, newSnapshot];
+    return [{ ...newSnapshot }, newSnapshot];
   }
   const last = history[history.length - 1];
   if (last.id === id) {
@@ -190,7 +203,7 @@ const sizeHistory = ({
   id = getCurrentCommitHash(),
 }: SizeHistoryOptions = {}) => {
   const file = ensureFile(path, '[]');
-  const history = parseFile<History>(file);
+  const history = parseFile(file);
   const [previousSnapshot, currentSnapshot] = getSnapshots(history, id);
   return {
     name: 'rollup-plugin-size-history',
